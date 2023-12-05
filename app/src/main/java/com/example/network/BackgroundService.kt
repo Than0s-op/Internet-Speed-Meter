@@ -28,12 +28,13 @@ class BackgroundService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-//        val activityManager: ActivityManager = this.getSystemService(ACTIVITY_SERVICE) as ActivityManager
-//
-//        if(activityManager.runningAppProcesses.isEmpty()){
-//            return START_NOT_STICKY
-//        }
-        println("Foreground service activated")
+
+        println("1.Foreground service activated ${startId}")
+
+        if(Global.isForeGroundRunning){
+            return START_NOT_STICKY
+        }
+        Global.isForeGroundRunning = true
 
         val speedObj = Speed()
         val notification = NotificationLogic(this).createNotification()
@@ -43,6 +44,7 @@ class BackgroundService : Service() {
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed(object : Runnable {
             override fun run() {
+                println("2.Foreground service activated ${startId}")
                 val isWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
                     ?.getState() == NetworkInfo.State.CONNECTED
                 val speed: Array<Long> =

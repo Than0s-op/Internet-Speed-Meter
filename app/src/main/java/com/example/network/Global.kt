@@ -15,5 +15,6 @@ class Global {
                 plusHours(23L - hour)
             }
         }
+        var isForeGroundRunning:Boolean = false
     }
 }
