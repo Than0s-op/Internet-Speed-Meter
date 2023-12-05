@@ -22,8 +22,8 @@ class AlarmReceiver : BroadcastReceiver() {
             Global.totalWifiUsedByte = data.last().toLongOrNull()?: 0      // set last value (Wifi Data). if it is null then set 0.
 
 //          set Day Finish Alarm
-            AndroidAlarmScheduler(context).schedule(LocalDateTime.now().plusSeconds(Global.saveDataTime.toLong()),"SaveDataAlarm")
-            AndroidAlarmScheduler(context).schedule(Global.GoodMorning,"DayFinishAlarm")
+            AndroidAlarmScheduler(context).schedule(LocalDateTime.now().plusSeconds(Global.saveDataTime.toLong()),Global.saveDataTime.toLong(),"SaveDataAlarm")
+            AndroidAlarmScheduler(context).schedule(Global.GoodMorning,null,"DayFinishAlarm")
 
             context?.startForegroundService(Intent(context, BackgroundService::class.java))
         }
@@ -39,7 +39,7 @@ class AlarmReceiver : BroadcastReceiver() {
             Global.totalWifiUsedByte = 0
             Global.totalMobileUsedByte = 0
             readWrite.write("Counter",setOf(counter.toString()))
-            AndroidAlarmScheduler(context).schedule(Global.GoodMorning,"DayFinishAlarm")
+            AndroidAlarmScheduler(context).schedule(Global.GoodMorning,null,"DayFinishAlarm")
         }
 
         if(intent?.action == "SaveDataAlarm"){
@@ -47,7 +47,7 @@ class AlarmReceiver : BroadcastReceiver() {
             val readWrite = ReadWriteLogic(context!!)
             val counter:Int = readWrite.read("Counter").first().toIntOrNull()?:Global.totalNumberOfDays.toInt()  // set counter value. if is null then set to it total number of days
             readWrite.write(counter.toString(),setOf(Global.totalMobileUsedByte.toString(),Global.totalWifiUsedByte.toString()))
-            AndroidAlarmScheduler(context).schedule(LocalDateTime.now().plusSeconds(Global.saveDataTime.toLong()),"SaveDataAlarm")
+//            AndroidAlarmScheduler(context).schedule(LocalDateTime.now().plusSeconds(Global.saveDataTime.toLong()),"SaveDataAlarm")
         }
     }
 }

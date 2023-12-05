@@ -36,14 +36,21 @@ class MainActivity : AppCompatActivity() {
 //			pendingIntent
 //		)
         val readWrite = ReadWriteLogic(this)
-        if(readWrite.read("Counter").first() == "-") readWrite.write("Counter",setOf(Global.totalNumberOfDays.toString()))
-
-        AndroidAlarmScheduler(this).schedule(
-            Global.GoodMorning, "DayFinishAlarm"
+        if (readWrite.read("Counter").first() == "-") readWrite.write(
+            "Counter",
+            setOf(Global.totalNumberOfDays.toString())
         )
 
         AndroidAlarmScheduler(this).schedule(
-            LocalDateTime.now().plusSeconds(Global.saveDataTime.toLong()), "SaveDataAlarm"
+            Global.GoodMorning,
+            null,
+            "DayFinishAlarm"
+        )
+
+        AndroidAlarmScheduler(this).schedule(
+            LocalDateTime.now().plusSeconds(Global.saveDataTime.toLong()),
+            Global.saveDataTime.toLong(),
+            "SaveDataAlarm"
         )
 
 //		println("Heeeeeeellooooooo woorlllldd")

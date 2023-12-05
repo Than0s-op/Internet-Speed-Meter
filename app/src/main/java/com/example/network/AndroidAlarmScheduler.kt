@@ -13,24 +13,36 @@ class AndroidAlarmScheduler(
 
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
-    fun schedule(item: LocalDateTime,action:String) {
+    fun schedule(triggerTime: LocalDateTime, intervalTimeSec: Long?, action: String) {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             this.action = action
         }
 
         // below code view in detail
-        alarmManager.setAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            item.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000,
-            PendingIntent.getBroadcast(
-                context,
-                item.hashCode(),
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        if (intervalTimeSec == null) {
+            alarmManager.setAndAllowWhileIdle(
+                AlarmManager.RTC,
+                triggerTime.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000,
+                PendingIntent.getBroadcast(
+                    context,
+                    triggerTime.hashCode(),
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
             )
-        )
-
-    }
+        } else {
+            alarmManager.setInexactRepeating(
+                AlarmManager.RTC,
+                triggerTime.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000,
+                intervalTimeSec * 1000,
+                PendingIntent.getBroadcast(
+                    context,
+                    triggerTime.hashCode(),
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+            )
+        }
 //
 //    override fun cancel(item: AlarmItem) {
 //        alarmManager.cancel(
@@ -42,4 +54,5 @@ class AndroidAlarmScheduler(
 //            )
 //        )
 //    }
+    }
 }
